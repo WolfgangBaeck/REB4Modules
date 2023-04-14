@@ -1,0 +1,64 @@
+name: Deploy All
+on:
+  workflow_dispatch:
+env:
+  ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+  ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+  ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+jobs:
+  delta:
+    runs-on: ubuntu-latest
+    steps:
+    # The order of checkouts is important because of cleaning and the step afterwards will not find anything
+    # unless there is a specific path specified!
+
+    # Checkout client files to root folder
+      - name: Checkout Client
+        uses: actions/checkout@v3
+        with:
+          repository: WolfgangBaeck/REB3Delta
+
+      # Checkout the module repository to separate folder protecting root file system    
+      - name: Checkout Modules
+        uses: actions/checkout@v3
+        with:
+          repository: WolfgangBaeck/REB3Modules
+          path: modules
+
+      - name: Show FileSystem
+        run: ls -R
+
+      - name: Run Terraform Action
+        uses: ./modules/.github/actions/terraformdeploy
+        
+  walm:
+    runs-on: ubuntu-latest
+    steps:
+    # The order of checkouts is important because of cleaning and the step afterwards will not find anything
+    # unless there is a specific path specified!
+
+    # Checkout client files to root folder
+      - name: Checkout Client
+        uses: actions/checkout@v3
+        with:
+          repository: WolfgangBaeck/REB3Walm
+
+      # Checkout the module repository to separate folder protecting root file system    
+      - name: Checkout Modules
+        uses: actions/checkout@v3
+        with:
+          repository: WolfgangBaeck/REB3Modules
+          path: modules
+
+      - name: Show FileSystem
+        run: ls -R
+
+      - name: Run Terraform Action
+        uses: ./modules/.github/actions/terraformdeploy
+
+  zeta:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get code for zeta client
+        run: echo "Running for zeta"

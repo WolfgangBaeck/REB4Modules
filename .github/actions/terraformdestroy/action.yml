@@ -1,0 +1,22 @@
+name: 'Run Terraform'
+description: 'Execute Terraform for an input client folder.'
+
+runs:
+  using: 'composite'
+  steps:
+  # Install the preferred version of Terraform CLI 
+  - name: Setup Terraform
+    uses: hashicorp/setup-terraform@v2
+    with:
+      terraform_version: 1.1.7
+
+  # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+  - name: Terraform Init
+    id: init
+    shell: bash  
+    run: terraform init 
+
+    # On push to main, build or change infrastructure according to Terraform configuration files
+  - name: Terraform Apply
+    shell: bash  
+    run: terraform destroy -auto-approve
