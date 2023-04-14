@@ -180,6 +180,7 @@ The replacement-token approach may be necessary if you need to replace placehold
 
 In the spoke or client repositories (REB4Delta, REB4Walm, etc.) I have specified environments for Production, Development, and UAT and for each environment in each client repository stored the necessary variables used for running Terraform such as ARM_CLIENT_ID, ARM_CLIENT_SECRET, ARM_TENANT_ID, and ARM_SUBSCRIPTION_ID.
 Based on the general reading and limited experience with our setup, I have for each client the following setup:
+```
 REB4<client>
 .github/workflows
 --dev-deploy.yml
@@ -192,6 +193,7 @@ main.tf
 provider.tf
 output.tf
 variables.tf
+```
 
 In all client workflow yaml files reusable workflows are called from the central module repository REB4Modules in this way:
 ```
