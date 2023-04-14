@@ -1,7 +1,7 @@
-# Reb3Modules Repository
-The modules repository is a part of a group of repositories, similar to a hub and spoke arrangement where the hub repository, namely Reb3Modules is the central
-repository being used by the spoke repositories. The spoke repositores are those which use the reusable module specifications in the Reb3Modules hub repository to build their environment.
-In the current proof of concept state, the spoke repositories are Reb3Delta, Reb3Epsilon, and Reb3Walm all of which use the same set of modules from the Reb3Modules repository.
+# REB4Modules Repository
+The modules repository is a part of a group of repositories, similar to a hub and spoke arrangement where the hub repository, namely REB4Modules is the central
+repository being used by the spoke repositories. The spoke repositores are those which use the reusable module specifications in the REB4Modules hub repository to build their environment.
+In the current proof of concept state, the spoke repositories are REB4Delta, REB4Epsilon, and REB4Walm all of which use the same set of modules from the REB4Modules repository.
 ## Rationale for a multiple repository approach
 I have looked at the monorepo layout and the polyrepo layout also called multi-repo layout and their advantages and drawbacks and consulted the write-up at https://earthly.dev/blog/monorepo-vs-polyrepo/
 
@@ -9,7 +9,7 @@ Because of the impact that the decision of the repository structure has on relea
 ## Workflows
 The idea of the poly-repo structure is that each spoke repository can have its own workflow and deployments are made based on triggering events such as a push or a pull-request in a spoke repository. At the same time, we need to be able to trigger the workflows in the spoke repository if a triggering event occurs in the hub repository. GitHub does not natively support the execution of workflow b in repository B if a push in repository A happens causing a workflow a. This can be accomplished by running cron events in the spoke repositories checking for changes in releases in the hub repository.
 
-I have currently decided to delay the introduction of a cron job and to create a general workflow for the Reb3Modules repository causing the build for each spoke repository by scheduling a build job for each spoke repository via the following steps for each spoke:
+I have currently decided to delay the introduction of a cron job and to create a general workflow for the REB4Modules repository causing the build for each spoke repository by scheduling a build job for each spoke repository via the following steps for each spoke:
 ```
 delta:
     runs-on: ubuntu-latest
@@ -21,13 +21,13 @@ delta:
       - name: Checkout Client
         uses: actions/checkout@v3
         with:
-          repository: WolfgangBaeck/REB3Delta
+          repository: WolfgangBaeck/REB4Delta
 
       # Checkout the module repository to separate folder protecting root file system    
       - name: Checkout Modules
         uses: actions/checkout@v3
         with:
-          repository: WolfgangBaeck/REB3Modules
+          repository: WolfgangBaeck/REB4Modules
           path: modules
 
       - name: Show FileSystem
@@ -36,7 +36,7 @@ delta:
       - name: Run Terraform Action
         uses: ./modules/.github/actions/terraformdeploy
 ```
-The code section above will be repeated for each spoke repository that is coded in the workflow yaml file in the Reb3Modules repository.
+The code section above will be repeated for each spoke repository that is coded in the workflow yaml file in the REB4Modules repository.
 
 ## Reusable actions
 Since we need to run the deployment for each client separately either in parallel or in sequence depending on our desire and the ability of Azure to cope with it, it is meaningful to embed the repetitive Terraform actions in its own action.yml file to be called for each job. This happens in the code above at the line of:
@@ -48,7 +48,7 @@ name: Run Terraform Action
 because the modules repository is checked out to the folder ./modules and not the root folder on the runner, we need to refer to the modules folder when calling the reusable (composite) action.
 
 ## Environment variables and secrets
-Currently, the workflow in the Reb3Module repository is making use of environment variables for the entire workflow like so:
+Currently, the workflow in the REB4Module repository is making use of environment variables for the entire workflow like so:
 
 ```
 name: Deploy All
@@ -67,7 +67,7 @@ jobs:
   ...
   Walm
 ```
-This implies that all the workflow jobs share the same secrets. If this isn't appropriate because we have different subscription ids for each client repository which is trivial to set in each client repository and the respective workflow, we will have to now employ job specific secrets in the Reb3Module repository:
+This implies that all the workflow jobs share the same secrets. If this isn't appropriate because we have different subscription ids for each client repository which is trivial to set in each client repository and the respective workflow, we will have to now employ job specific secrets in the REB4Module repository:
 ```
 name: Deploy All
 on:
@@ -90,9 +90,9 @@ jobs:
   ...
   Walm
 ```
-It is obvious that this can result in a number of problems since we have the information now in more than one place.
+It is obvious that this can result in a number of problems since we have the information now in more than one place and for this reason, GitHub provides the definition of an environment such as "UAT", "PROD", or anything else you may need and with this, you can specify secrets with the same name but different values for each environment. At the moment, the repositories are not set up with environments.
 # Spoke Repository
-Spoke repositories are all those that utilize the Reb3Module repository to implement the Terraform code necessary for a complete client deployment. Examples are Reb3Walm and Reb3Kroger for example. Spoke repositories have their own deployment and destroy definitions as well as their own set of secrets holding the necessary information for tenent, client, subscription, and secrets which must be kept in synch with the Reb3Module secrets if the intent to run all spoke deployments automatically upon a deployment in the Reb3Module repository.
+Spoke repositories are all those that utilize the REB4Module repository to implement the Terraform code necessary for a complete client deployment. Examples are REB4Walm and REB4Kroger for example. Spoke repositories have their own deployment and destroy definitions as well as their own set of secrets holding the necessary information for tenent, client, subscription, and secrets which must be kept in synch with the REB4Module secrets if the intent to run all spoke deployments automatically upon a deployment in the REB4Module repository.
 ## Spoke Repository Creation
 When creating a repository for a new client, several steps have to be completed in the right order:
 1. Creating the client repository and uploading the terraform code for the client
@@ -173,5 +173,7 @@ When the state file has the "LEASE STATUS" of "unlocked" a Terraform process can
 ![screenshot](breakthelease.png)
 
 # State Separation for Environments (Prod, Test, Dev)
-The aspect of state separation, whether via directories or workspaces has not been approached yet. Directory separated environments will rely on duplication of Terraform code with the result of creating drift between the environments over time. If we where to attempt environment separation via workspaces, we would be forced to manage the workspaces in the CLI.
-I had no time yet to investigate the idea presented by Microsoft to employ TerraGrunt for this.
+It seems that the coolest term currently floating in the area of handling multiple environments is "Keep your code DRY". It's an odd way of saying what every seasoned software developer knows as "One fact in one place only", especially the DB guys and here it means "Do not repeat yourself".
+GitHub Actions supports this by providing the user with the idea of Environments and if the repository has a good structure suchas as stated here: (https://faun.pub/the-best-way-to-structure-your-terraform-projects-3f56b6440dcb) GitHub will greatly support you and you may not even need a replacement-token approach.
+The replacement-token approach may be necessary if you need to replace placeholder tokens in .tfvars (and perhaps provider.tf) files since variables in .tfvars files cannot be substituted at Terraform apply time from the variables.tf file.
+In the spoke or client repositories (REB4Delta, REB4Walm, etc.) I have specified environments for Production, Development, and UAT and for each environment in each client repository stored the necessary variables used for running Terraform such as ARM_CLIENT_ID, ARM_CLIENT_SECRET, ARM_TENANT_ID, and ARM_SUBSCRIPTION_ID.
