@@ -176,7 +176,7 @@ When the state file has the "LEASE STATUS" of "unlocked" a Terraform process can
 It seems that the coolest term currently floating in the area of handling multiple environments is "Keep your code DRY". It's an odd way of saying what every seasoned software developer knows as "One fact in one place only", especially the DB guys and here it means "Do not repeat yourself".
 
 GitHub Actions supports this by providing the user with the idea of Environments and if the repository has a good structure suchas as stated here: (https://faun.pub/the-best-way-to-structure-your-terraform-projects-3f56b6440dcb) GitHub will greatly support you and you may not even need a replacement-token approach.
-The replacement-token approach may be necessary if you need to replace placeholder tokens in .tfvars (and perhaps provider.tf) files since variables in .tfvars files cannot be substituted at Terraform apply time from the variables.tf file.
+The replacement-token approach may be necessary if you need to replace placeholder tokens in .tfvars (and perhaps provider.tf) files since variables in .tfvars files cannot be substituted at Terraform apply time from the variables.tf file, one can only provide different variables.tfvar files at apply and plan time.
 
 In the spoke or client repositories (REB4Delta, REB4Walm, etc.) I have specified environments for Production, Development, and UAT and for each environment in each client repository stored the necessary variables used for running Terraform such as ARM_CLIENT_ID, ARM_CLIENT_SECRET, ARM_TENANT_ID, and ARM_SUBSCRIPTION_ID.
 Based on the general reading and limited experience with our setup, I have for each client the following setup:
