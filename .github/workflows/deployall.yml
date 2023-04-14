@@ -17,13 +17,13 @@ jobs:
       - name: Checkout Client
         uses: actions/checkout@v3
         with:
-          repository: WolfgangBaeck/REB3Delta
+          repository: WolfgangBaeck/REB4Delta
 
       # Checkout the module repository to separate folder protecting root file system    
       - name: Checkout Modules
         uses: actions/checkout@v3
         with:
-          repository: WolfgangBaeck/REB3Modules
+          repository: WolfgangBaeck/REB4Modules
           path: modules
 
       - name: Show FileSystem
@@ -42,13 +42,13 @@ jobs:
       - name: Checkout Client
         uses: actions/checkout@v3
         with:
-          repository: WolfgangBaeck/REB3Walm
+          repository: WolfgangBaeck/REB4Walm
 
       # Checkout the module repository to separate folder protecting root file system    
       - name: Checkout Modules
         uses: actions/checkout@v3
         with:
-          repository: WolfgangBaeck/REB3Modules
+          repository: WolfgangBaeck/REB4Modules
           path: modules
 
       - name: Show FileSystem

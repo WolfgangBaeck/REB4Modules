@@ -17,6 +17,6 @@ runs:
     run: terraform init 
 
     # On push to main, build or change infrastructure according to Terraform configuration files
-  - name: Terraform Apply
+  - name: Terraform Destroy
     shell: bash  
     run: terraform destroy -auto-approve
