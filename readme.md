@@ -67,7 +67,7 @@ jobs:
   ...
   Walm
 ```
-This implies that all the workflow jobs share the same secrets. If this isn't appropriate because we have different subscription ids for each client repository which is trivial to set in each client repository and the respective workflow, we will have to now employ job specific secrets in the REB4Module repository:
+This implies that all the workflow jobs share the same secrets on a per client basis. If this isn't appropriate because we may want different subscription ids for each client repository which is trivial to set in each client repository and the respective workflow, we will have to now employ job specific secrets in the REB4Module repository:
 ```
 name: Deploy All
 on:
@@ -90,7 +90,10 @@ jobs:
   ...
   Walm
 ```
-It is obvious that this can result in a number of problems since we have the information now in more than one place and for this reason, GitHub provides the definition of an environment such as "UAT", "PROD", or anything else you may need and with this, you can specify secrets with the same name but different values for each environment. At the moment, the repositories are not set up with environments.
+It is obvious that this can result in a number of problems since we have the information now in more than one place. There is no solution available for this specific scenario in GitHub.  
+
+## Environments
+Github provides the definition of an environment such as "UAT", "PROD", or anything else you may need and one can specify secrets with the same name but different values for each environment. The setup is trivial and the environment value along with respective secrets can be passed to a reusable workflow. 
 # Spoke Repository
 Spoke repositories are all those that utilize the REB4Module repository to implement the Terraform code necessary for a complete client deployment. Examples are REB4Walm and REB4Kroger for example. Spoke repositories have their own deployment and destroy definitions as well as their own set of secrets holding the necessary information for tenent, client, subscription, and secrets which must be kept in synch with the REB4Module secrets if the intent to run all spoke deployments automatically upon a deployment in the REB4Module repository.
 ## Spoke Repository Creation
