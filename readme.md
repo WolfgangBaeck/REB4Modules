@@ -5,7 +5,7 @@ In the current proof of concept state, the spoke repositories are REB4Delta, REB
 ## Rationale for a multiple repository approach
 I have looked at the monorepo layout and the polyrepo layout also called multi-repo layout and their advantages and drawbacks and consulted the write-up at https://earthly.dev/blog/monorepo-vs-polyrepo/
 
-Because of the impact that the decision of the repository structure has on releases, issue-tracking, and permissions, I have decided for a poly-repo layout.
+Because of the impact that the decision of the repository structure has on releases, issue-tracking, and permissions, I have decided for a poly-repo layout described here. The contrasting mon-repository is available as REB3Azure and described there.
 ## Workflows
 The idea of the poly-repo structure is that each spoke repository can have its own workflow and deployments are made based on triggering events such as a push or a pull-request in a spoke repository. At the same time, we need to be able to trigger the workflows in the spoke repository if a triggering event occurs in the hub repository. GitHub does not natively support the execution of workflow b in repository B if a push in repository A happens causing a workflow a. This can be accomplished by running cron events in the spoke repositories checking for changes in releases in the hub repository.
 
